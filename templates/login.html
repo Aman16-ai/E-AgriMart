@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block body %}
+    <form action="/account/handlelogin" method="post">
+        {% csrf_token %}
+        <div class="container">
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"><h5>Username</h5></label>
+              <input type="text" name="username" class="form-control" id="exampleFormControlInput1" placeholder="Enter your email">
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"><h5>Password</h5></label>
+              <input type="password" name="password" class="form-control" id="exampleFormControlInput1" placeholder="Enter Password">
+            </div>
+            <div class="mb-3">
+              <button type="submit" class="btn btn-primary">Login</button> 
+            </div>
+          </div>
+    </form>
+
+{% endblock body %}

@@ -1,0 +1,25 @@
+{% extends 'farmerbase.html' %}
+{% block body %}
+    <div class="container">
+        <h3 class="my-2">Add crop</h3>
+        <form action="/farmer/addProduct/" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Crop Name</label>
+                <input type="text" name="crop_name" class="form-control"  placeholder="Enter crop name">
+              </div>
+              <div class="mb-3">
+                <input class="form-control" type="file" name="img">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Crop Qunatity</label>
+                <input type="text" name="crop_qunatity" class="form-control" placeholder="Enter crop qunatity">
+              </div>
+              <div class="mb-3">
+                <label  class="form-label">Crop price</label>
+                <input type="text" name="crop_price" class="form-control" placeholder="Enter crop price">
+              </div>
+              <button class="btn btn-primary">Add Crop</button>
+        </form>
+    </div>
+{% endblock body %}

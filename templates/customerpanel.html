@@ -1,0 +1,41 @@
+{% extends 'customerbase.html' %}
+{% block css %}
+    <style>
+        #crop-link h5 {
+            color: black;
+        }
+        #crop-link {
+            text-decoration: none;
+        }
+        #crop-link:hover {
+            text-decoration: underline;
+            text-decoration-thickness: 3px;
+            text-decoration-color: black;
+        }
+    </style>
+{% endblock css %}
+{% block body %}
+<div class="container">
+    <h3 class="my-3">Top Deals of the day</h3>
+
+    <div class="crops row row-cols-2">
+
+        {% for p in allproducts %}
+        <div class="card my-2 mx-3 col" style="width: 18rem;">
+            <img style="height:10rem" src="{{p.crop_img.url}}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <a id="crop-link" href="..."><h5 class="card-title">{{p.crop_name}}</h5></a>
+                <p class="card-text">Quantity : {{p.quantity}}</p>
+                <p class="card-text">Base Price : {{p.price}}</p>
+                <form action="/customer/addbid/{{p.id}}/" method="post">
+                    {% csrf_token %}
+                    <input type="text" class="form-control" name="bidamount" placeholder="Your bid amount">
+                    <button class="btn btn-primary my-2">Bid</button>
+                </form>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
+{% endblock body %}
