@@ -6,6 +6,7 @@ urlpatterns = [
     path("predict/",predictProduction),
     path("handleprediction/",handlepredictedProduction),
     path("addProduct/",addProduct),
-    path("bids/",fetchallbids)
+    path("bids/",fetchallbids),
+    path("crop/<int:pk>/",cropDetail)
 ]
 

@@ -4,6 +4,7 @@ import pickle
 from account.models import UserProfile
 
 from farmer.models import Product,Bid
+from django.db.models import Q
 # Create your views here.
 # import MachineLearning.predictor as ML
 def index(request):
@@ -55,12 +56,37 @@ def addProduct(request):
 def fetchallbids(request):
     userProfile = UserProfile.objects.get(user = request.user)
     if userProfile.user_type == "Farmer":
+        
+        #getting all bids of the farmer
         lst = []
         allbids = Bid.objects.all()
         for b in allbids:
+            dic = {}
             if b.crop.farmer.user.username == userProfile.user.username:
                 lst.append(b)
         print(lst)
-        return render(request,"farmersbids.html",{"bids":lst})
+        
+        #getting the crop and its count of a bid
+        dic = {}
+        for l in lst: 
+            if l.crop.crop_name in dic:
+                dic[l.crop.crop_name]['count'] += 1
+            else:
+                dic[l.crop.crop_name] = {'crop':l.crop,'count':1}
+            
+        print(dic)
+        
+        return render(request,"farmersbids.html",{"bids":lst,"crops":dic})
     else:
         return HttpResponse("Not a valid user")
+    
+
+def cropDetail(request,pk):
+    crop = Product.objects.get(pk = pk)
+    farmer = UserProfile.objects.get(user = request.user)
+    bids = []
+    for b in Bid.objects.filter(crop = crop):
+        if b.crop.farmer.user.username == farmer.user.username:
+            bids.append(b)
+    print(bids)
+    return HttpResponse(f"crop detail  {pk}")

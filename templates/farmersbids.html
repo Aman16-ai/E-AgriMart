@@ -5,25 +5,32 @@
         
         <div class="crops row">
            
-            {% for b in bids %}
+            {% for crop,value in crops.items %}
             <div class="card my-2 mx-3 col"  style="width: 18rem;">
-                <img style="height: 10rem;" src="{{b.crop.crop_img.url}}" class="card-img-top" alt="...">
+                <!-- <img style="height: 10rem;" src="{{b.crop.crop_img.url}}" class="card-img-top" alt="..."> -->
+                <img style="height: 10rem;" src="{{value.crop.crop_img.url}}" class="card-img-top" alt="...">
                 <div class="card-body">
-                  <h5 class="card-title">{{b.crop.crop_name}}</h5>
-                  <p class="card-text">Customer : {{b.customer.user.username}}</p>
+                  <!-- {% comment %} <h5 class="card-title">{{b.crop.crop_name}}</h5> {% endcomment %} -->
+                  <h5 class="card-title">{{crop}}</h5>
+                  <!-- <p class="card-text">Customer : {{b.customer.user.username}}</p>
                   <p class="card-text">Base Price : {{b.crop.price}}</p>
-                  <p class="card-text">Bid Price : {{b.bid_price}}</p>
-
+                  <p class="card-text">Bid Price : {{b.bid_price}}</p> -->
+                    <p>Total bids : {{value.count}}</p>
                 <!-- <form action="/customer/addbid/{{p.id}}/" method="post">
                     {% csrf_token %}
                     <button class="btn btn-primary my-2">Accept bid</button>
                 </form> -->
-                <a class="btn btn-success" href="...">Accept</a>
-                <a class="btn btn-danger" href="...">Decline</a>
+                <a class="btn btn-primary" href="/farmer/crop/{{value.crop.id}}/">Read more</a>
                 </div>
               </div>
+
+
             
             {% endfor %}
+
+            <!-- {% for crop,value in crops.items %}
+              <p>crop {{crop}} count {{value.count}}</p>
+            {% endfor %} -->
         </div>
     </div>
 {% endblock body %}
