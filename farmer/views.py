@@ -89,4 +89,5 @@ def cropDetail(request,pk):
         if b.crop.farmer.user.username == farmer.user.username:
             bids.append(b)
     print(bids)
-    return HttpResponse(f"crop detail  {pk}")
+    context = {'crop':crop,'bids':bids}
+    return render(request,"cropDetail.html",context=context)

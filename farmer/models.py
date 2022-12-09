@@ -31,3 +31,7 @@ class Bid(models.Model):
     def __str__(self):
         return f"Bid by {self.customer.user.username}"
     
+    @property
+    def profit(self):
+        return self.bid_price - self.crop.price
+    
