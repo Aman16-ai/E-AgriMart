@@ -1,4 +1,4 @@
-{% extends 'customerbase.html' %}
+{% extends 'farmerbase.html' %}
 {% block css %}
     <style>
         .main-container {
@@ -13,16 +13,12 @@
             flex-direction: column;
             padding: 5px;
             border-right: 1px solid black;
-            margin-left: 30px;
         }
         .right img {
             margin-top: 10px;
-            width: 60vw;
+            margin-left: 10px;
+            width: 59vw;
             height: 58vh;
-            align-self: center;
-        }
-        .right > h1,h4,p {
-            margin-left: 40px;
         }
         .left {
             width: 30%;
@@ -31,8 +27,8 @@
             flex-direction: column;
             padding: 10px;
             overflow-y: scroll;
-            margin-right: 40px;
-            overflow-x: hidden;
+            
+            
         }
         .left h1 {
             margin-left: 1vw;
@@ -57,9 +53,6 @@
             border-radius: 15rem;
             
         }
-        #crop-info {
-            display: flex;
-        }
     </style>
 {% endblock css %}
 {% block body %}
@@ -68,24 +61,9 @@
             <img src="{{crop.crop_img.url}}" alt="">
             <h1 class="my-1">{{crop.crop_name}}</h1>
             <p class="my-1">Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis ipsam sequi quibusdam excepturi qui inventore quos autem! Aspernatur dolorum laborum maxime cupiditate consectetur aliquam minima quo. Sint iure itaque suscipit ea deserunt!</p>
-           <div id="crop-info">
-            <h4 id="price-heading">Base Price : ₹{{crop.price}}</h4>
-            <h4 style="margin-left: 20px;">Quantity : {{crop.quantity}}kg</h4>
-           </div>
-           {% if bidAdded %}
-            <form action="/customer/updateBid/{{user_bid.first.id}}/" method="post">
-                {% csrf_token %}
-                <input style="width: 13vw; display:inline; margin-left:40px" type="text" class="form-control" name="bidamount" placeholder="Your bid amount">
-                <button class="btn btn-primary my-2">Modify Bid</button>
-            </form>
-            {% else %}
-                <form action="/customer/addbid/{{crop.id}}/" method="post">
-                    {% csrf_token %}
-                    <input style="width: 13vw; display:inline; margin-left:40px" type="text" class="form-control" name="bidamount" placeholder="Your bid amount">
-                    <button class="btn btn-primary my-2">Add Bid</button>
-                </form>
-            {% endif %}
-            <h3 style="margin-left: 40px;" class="my-3">Reviews</h3>
+            <h2 id="price-heading">Base Price : ₹{{crop.price}}</h2>
+            <h2>Quantity : {{crop.quantity}}kg</h2>
+            <h3 class="my-3">Reviews</h3>
         </div>
         <div class="left">
             <h1>Bids</h1>
@@ -99,6 +77,11 @@
                 <h5 class="mx-3 my-1">Location : {{b.customer.address.city}}, {{b.customer.address.state}}</h5>
                 <h4 class="mx-3 my-1">Bid Price : ₹{{b.bid_price}}</h4>
                 <h4 class="mx-3 my-1">Profit : ₹{{b.profit}}</h4>
+
+                <div class="mx-3 my-3 btns">
+                    <button class="btn btn-success">Accept</button>
+                    <button class="btn btn-danger">Decline</button>
+                </div>
             </div>
             {% endfor %}
 

@@ -90,4 +90,4 @@ def cropDetail(request,pk):
             bids.append(b)
     print(bids)
     context = {'crop':crop,'bids':bids}
-    return render(request,"cropDetail.html",context=context)
+    return render(request,"fullcropDetail.html",context=context)
