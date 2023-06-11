@@ -6,5 +6,6 @@ urlpatterns = [
     path("register/signup",handleRegister,name="signup"),
     path("login/",loginpage),
     path("handlelogin",handleLogin),
-    path("logout/",logoutuser)
+    path("logout/",logoutuser),
+    # path("api/",include("api.urls"))
 ]
