@@ -7,6 +7,7 @@ from farmer.models import Product,Bid
 from django.db.models import Q
 # Create your views here.
 # import MachineLearning.predictor as ML
+from MachineLearning.cropQuality.main import get_crop_quality
 def index(request):
     return render(request,"farmerpanel.html")
 
@@ -42,13 +43,17 @@ def handlepredictedProduction(request):
 def addProduct(request):
     if request.method == 'POST':
         crop_name = request.POST["crop_name"]
-        img = request.FILES["img"]
+        main_img = request.FILES["img"]
+        single_img = request.FILES['img2']
         crop_quantity = request.POST['crop_qunatity']
         crop_price = request.POST["crop_price"]
-        print(crop_name,img,crop_quantity,crop_price)
-        
+        print(crop_name,main_img,crop_quantity,crop_price)
+        print(main_img,single_img)
+        quality = get_crop_quality(main_img,single_img)
+        print("crop quailty --------> ",quality)
         farmer = UserProfile.objects.get(user = request.user)
-        crop = Product(farmer = farmer,crop_name=crop_name,crop_img=img,quantity=crop_quantity,price =crop_price)
+        crop = Product(farmer = farmer,crop_name=crop_name,crop_img=main_img,quantity=crop_quantity,price =crop_price)
+        crop.quality = quality
         crop.save()
         return redirect("/farmer/addProduct")
     return HttpResponse("adding ")
@@ -59,16 +64,17 @@ def fetchallbids(request):
         
         #getting all bids of the farmer
         lst = []
-        allbids = Bid.objects.all()
-        for b in allbids:
-            dic = {}
-            if b.crop.farmer.user.username == userProfile.user.username:
-                lst.append(b)
-        print(lst)
+        userProfile = UserProfile.objects.get(user=request.user)
+        allbids = Bid.objects.filter(farmer=userProfile)
+        # for b in allbids:
+        #     dic = {}
+        #     if b.crop.farmer.user.username == userProfile.user.username:
+        #         lst.append(b)
+        # print(lst)
         
         #getting the crop and its count of a bid
         dic = {}
-        for l in lst: 
+        for l in allbids: 
             if l.crop.crop_name in dic:
                 dic[l.crop.crop_name]['count'] += 1
             else:

@@ -8,6 +8,12 @@ status_choice = (
     ("Selected","Selected")
 )
 
+crop_quality_choice = (
+    ('Good','Good'),
+    ('Medium','Medium'),
+    ('Low','Low')
+)
+
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
     farmer = models.ForeignKey(UserProfile,on_delete = models.CASCADE)
@@ -15,6 +21,7 @@ class Product(models.Model):
     crop_name = models.CharField(max_length=150)
     quantity = models.PositiveIntegerField()
     price = models.PositiveBigIntegerField()
+    quality = models.CharField(choices=crop_quality_choice,max_length=30,null=True,blank=True)
     
     def __str__(self):
         return self.crop_name
@@ -22,7 +29,7 @@ class Product(models.Model):
 
 class Bid(models.Model):
     id = models.AutoField(primary_key=True)
-    # farmer = models.ForeignKey(UserProfile,on_delete = models.CASCADE,related_name="bid_farmer")
+    farmer = models.ForeignKey(UserProfile,default=None,on_delete = models.CASCADE,related_name="bid_farmer")
     customer = models.ForeignKey(UserProfile,on_delete = models.CASCADE,related_name="bid_coustmer")
     crop = models.ForeignKey(Product,on_delete=models.CASCADE,null=True,blank=True)
     status = models.CharField(choices = status_choice,max_length=20)
