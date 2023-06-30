@@ -19,7 +19,8 @@ def addBid(request,pk):
         userProfile = UserProfile.objects.get(user = request.user)
         if userProfile.user_type == "Customer":
             crop = Product.objects.get(pk = pk)
-            bid = Bid(customer = userProfile,crop=crop,status="Pending",bid_price = request.POST["bidamount"])
+            farmer = crop.farmer
+            bid = Bid(customer = userProfile,farmer=farmer,crop=crop,status="Pending",bid_price = request.POST["bidamount"])
             bid.save()
             
             return redirect(f"/customer/crop/{pk}")
