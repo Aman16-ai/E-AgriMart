@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from account.models import User,UserProfile,Address
-
+from django.contrib.auth.models import Group
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -47,6 +47,10 @@ class RegisterationSerializer(serializers.ModelSerializer):
             addressObj = address_instance.create(validated_data=address)
             userProfile_instance = UserProfile(user = userObj,address = addressObj,**validated_data)
             userProfile_instance.save()
+            if validated_data.get('user_type') == 'Customer':
+                group = Group.objects.get(name="Customer")
+                userObj.groups.add(group)
+                userObj.save()
             return userProfile_instance
         else:
             return None
