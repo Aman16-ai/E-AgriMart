@@ -34,6 +34,15 @@ gender_choices = (
     ("Other","Other")
 )
 
+season_choices = (
+    ("Kharif","Kharif"),
+    ("Whole Year","Whole Year"),
+    ("Rabi","Rabi"),
+    ("Autumn","Autumn"),
+    ("Summer","Summer"),
+    ("Winter","Winter")
+)
+
 class Address(models.Model):
     id = models.AutoField(primary_key = True)
     pincode = models.IntegerField(blank=True, null=True)
@@ -56,4 +65,24 @@ class UserProfile(models.Model):
     # gender = ChoiceField(choices=gender_choices)
     
 
+class CropDetail(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=300)
+    season = models.CharField(choices=season_choices,max_length=50)
+
+    def __str__(self) -> str:
+        return self.name
+    
+class FarmerProfile(models.Model):
+    id = models.AutoField(primary_key=True)
+    userProfile = models.OneToOneField(UserProfile,on_delete=models.CASCADE,related_name="farmer_user_profile")
+    crops = models.ManyToManyField(CropDetail)
+    soil_N = models.IntegerField()
+    soil_P = models.IntegerField()
+    soil_K = models.IntegerField()
+    soil_Ph = models.FloatField()
+    soil_moisture = models.IntegerField()
+
+    def __str__(self) -> str:
+        return self.userProfile.user.username
 
