@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from account.models import User,UserProfile,Address
+from account.models import User,UserProfile,Address,CropDetail,FarmerProfile
 from django.contrib.auth.models import Group
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,5 +58,34 @@ class RegisterationSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
+
+
+class FarmerRegistrationSerializer(serializers.ModelSerializer):
+    userProfile = RegisterationSerializer()
+    
+    class Meta:
+        model = FarmerProfile
+        fields = "__all__"
+    
+    def create(self, validated_data):
+        print("validated_data ----------------> ",validated_data)
+        user_profile_validated_data = validated_data.pop("userProfile")
+        user_profile_instance = RegisterationSerializer(data = user_profile_validated_data)
+        if user_profile_instance.is_valid(raise_exception=True):
+            user_obj = user_profile_instance.save()
+            crops = validated_data.pop('crops')
+            farmer_profile_instance = FarmerProfile(userProfile = user_obj,**validated_data)
+            farmer_profile_instance.save()
+            for c in crops:
+                farmer_profile_instance.crops.add(c)
+            return farmer_profile_instance
+        
+class FarmerDetailsSerializer(serializers.ModelSerializer):
+    userProfile = RegisterationSerializer()
+    class Meta:
+        model = FarmerProfile
+        fields = "__all__"
+        depth = True
+
 
     
