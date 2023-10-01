@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from middleware.custom_permission import FarmerPermission
+from middleware.custom_permission import FarmerPermission,FarmerOrReadOnlyPermission
 from rest_framework.permissions import IsAuthenticated
 from account.models import CropDetail,UserProfile
 from .serializer import CropsModelSerializer, ProductCreateModelSerializer, ProductModelSerializer
@@ -34,7 +34,7 @@ class CropsViewSet(viewsets.ModelViewSet):
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [FarmerOrReadOnlyPermission]
     def get_serializer_class(self):
         if self.action == 'create':
             return ProductCreateModelSerializer
