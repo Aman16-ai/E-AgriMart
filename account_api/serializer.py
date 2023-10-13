@@ -14,6 +14,12 @@ class UserSerializer(serializers.ModelSerializer):
         userobj.last_name = last_name
         userobj.save()
         return userobj
+    
+    # def to_representation(self, instance):
+    #     data = super().to_representation(instance)
+    #     if self.context['request'].method == 'GET':
+    #         data.pop('password')
+    #     return data
 
 
 
@@ -87,5 +93,13 @@ class FarmerDetailsSerializer(serializers.ModelSerializer):
         fields = "__all__"
         depth = True
 
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    address = AddressSerializer()
+
+    class Meta:
+        model = UserProfile
+        fields = "__all__"
 
     
