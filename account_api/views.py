@@ -1,10 +1,13 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
-from .serializer import RegisterationSerializer,LoginSerializer, FarmerRegistrationSerializer,FarmerDetailsSerializer
+from .serializer import RegisterationSerializer,LoginSerializer, FarmerRegistrationSerializer,FarmerDetailsSerializer,UserDetailsSerializer
 from account.models import UserProfile,FarmerProfile
 from django.contrib.auth import authenticate
 from utils.jwtUtil import get_tokens_for_user
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 class AccountViewset(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = RegisterationSerializer
@@ -114,10 +117,12 @@ class FarmerAccountViewSet(viewsets.ModelViewSet):
         }
     
 
-@api_view(['POST'])
-def createAccount(request):
-    serializer = RegisterationSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getUserDetails(request):
+    print("Running get user")
+    try:
+        serializer = UserDetailsSerializer(UserProfile.objects.get(user=request.user),many=False)
+        return Response({"Response":serializer.data},status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"Error" : "something went wrong"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
