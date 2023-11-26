@@ -1,6 +1,7 @@
 from pyexpat import model
 from django.db import models
 from account.models import UserProfile
+from django.db.models import Avg,Count
 # Create your models here.
 
 status_choice = (
@@ -25,6 +26,12 @@ class Product(models.Model):
     
     def __str__(self):
         return self.crop_name
+    
+    def get_averageBidPrice(self):
+        return Bid.objects.filter(crop=self.id).aggregate(Avg('bid_price'))['bid_price__avg']
+    
+    def get_totalBids(self):
+        return len(Bid.objects.filter(crop=self.id))
     
 
 class Bid(models.Model):
