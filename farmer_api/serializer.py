@@ -11,6 +11,19 @@ class CropsModelSerializer(serializers.ModelSerializer):
 
 class ProductModelSerializer(serializers.ModelSerializer):
     farmer = RegisterationSerializer(read_only=True)
+
+    # we can directly add this into our fields of meta Class or we can conditionally render using to_representation method.
+    def get_averageBidPrice(self,obj):
+        # return f"Avrage bid of crop f{obj.id}"
+        return obj.get_averageBidPrice()
+    
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        if(self.context['request'].method == 'GET'):
+            rep['averageBidPrice'] = self.get_averageBidPrice(instance)
+            rep['total_bids'] = instance.get_totalBids()
+        return rep
+    
     class Meta:
         fields = "__all__"
         model = Product
