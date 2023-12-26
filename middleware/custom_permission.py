@@ -4,11 +4,8 @@ from django.contrib.auth.models import AnonymousUser
 class CustomerPermission(BasePermission):
 
     def has_permission(self, request, view):
-        user_profile_instance = UserProfile.objects.get(user = request.user)
-        if(user_profile_instance.user_type == 'Customer'):
-            return True
-        else:
-            return request.user.groups.filter(name='Customer').exists()
+        # user_profile_instance = UserProfile.objects.get(user = request.user)
+        return request.user.groups.filter(name='Customer').exists()
         
 class FarmerPermission(BasePermission):
 
@@ -40,3 +37,9 @@ class FarmerOrReadOnlyPermission(BasePermission):
         except Exception as e:
             print(e)
             return False
+        
+class CustomerOrReadOnlyPermission(CustomerPermission):
+    def has_permission(self, request, view):
+        if(request.method == 'GET'):
+            return True
+        return super().has_permission(request, view)
