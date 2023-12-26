@@ -11,6 +11,7 @@ def predict(grain_image):
     mean = np.array([123.68, 116.779, 103.939], dtype="float32")
 
     # Read image and normalize
+    # This code block is performing the following operations on the image:
     img = cv2.imread(img_url)
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, (224, 224)).astype("float32")
@@ -18,6 +19,7 @@ def predict(grain_image):
     img -= mean
 
     # Load model, LB and predict
+    # The code block you provided is performing the following steps:
     Q = deque(maxlen=128)
     model = load_model("crop_diease_detection_model2.h5")
     lb = pickle.loads(open("label","rb").read())

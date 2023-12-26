@@ -57,6 +57,10 @@ class RegisterationSerializer(serializers.ModelSerializer):
                 group = Group.objects.get(name="Customer")
                 userObj.groups.add(group)
                 userObj.save()
+            elif validated_data.get('user_type') == 'Farmer':
+                group = Group.objects.get(name="Farmer")
+                userObj.groups.add(group)
+                userObj.save()
             return userProfile_instance
         else:
             return None

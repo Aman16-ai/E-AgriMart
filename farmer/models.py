@@ -18,6 +18,7 @@ crop_quality_choice = (
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
     farmer = models.ForeignKey(UserProfile,on_delete = models.CASCADE)
+    title = models.CharField(max_length=250,null=True,blank=True)
     crop_img = models.ImageField(upload_to="crop_img")
     crop_name = models.CharField(max_length=150)
     quantity = models.PositiveIntegerField()
@@ -28,7 +29,11 @@ class Product(models.Model):
         return self.crop_name
     
     def get_averageBidPrice(self):
-        return Bid.objects.filter(crop=self.id).aggregate(Avg('bid_price'))['bid_price__avg']
+        avg_price = Bid.objects.filter(crop=self.id).aggregate(Avg('bid_price'))['bid_price__avg']
+        if avg_price != None:
+            return avg_price
+        else:
+            return 0
     
     def get_totalBids(self):
         return len(Bid.objects.filter(crop=self.id))
