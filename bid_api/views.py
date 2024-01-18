@@ -22,10 +22,11 @@ class BidViewSet(viewsets.ModelViewSet):
         'create' : BidModelSerializer
     }
 
-    @action(detail=True,methods=['GET'])
+    @action(detail=False,methods=['GET'])
     def get_dashboad_data(self,request,pk=None):
         try:
-            dashBoardService = BidDashBoardService(product_id=pk,user=request.user)
+            product_id = request.GET['product_id']
+            dashBoardService = BidDashBoardService(product_id=product_id,user=request.user)
             data = dashBoardService.getDashBoardData()
             print('data ------> data',data)
             return Response({"Response":data},status=status.HTTP_200_OK)
