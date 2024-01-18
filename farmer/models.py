@@ -1,7 +1,9 @@
 from pyexpat import model
 from django.db import models
 from account.models import UserProfile
-from django.db.models import Avg,Count
+from django.db.models import Q
+from django.db.models import Avg,Count,Max
+from django.core.exceptions import ObjectDoesNotExist
 # Create your models here.
 
 status_choice = (
@@ -31,12 +33,16 @@ class Product(models.Model):
     def get_averageBidPrice(self):
         avg_price = Bid.objects.filter(crop=self.id).aggregate(Avg('bid_price'))['bid_price__avg']
         if avg_price != None:
-            return avg_price
+            return avg_price or 0
         else:
             return 0
     
     def get_totalBids(self):
         return len(Bid.objects.filter(crop=self.id))
+    
+    def get_heighest_bid_price(self):
+        heighest_bid_price = Bid.objects.filter(crop=self).aggregate(Max("bid_price"))['bid_price__max']
+        return heighest_bid_price or 0
     
 
 class Bid(models.Model):
@@ -54,3 +60,13 @@ class Bid(models.Model):
     def profit(self):
         return self.bid_price - self.crop.price
     
+    @staticmethod
+    def is_current_customer_added(user,crop):
+        return Bid.objects.filter(Q(customer=user) & Q(crop=crop)).exists()
+
+    @staticmethod
+    def get_customer_bid(user,crop):
+        try:
+            return Bid.objects.get(Q(customer=user) & Q(crop=crop))
+        except ObjectDoesNotExist:
+            return None
