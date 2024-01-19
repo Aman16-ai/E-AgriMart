@@ -1,0 +1,14 @@
+{
+    "builds": [
+      {
+        "src": "E_Agrimart/wsgi.py",
+        "use": "@vercel/python"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "E_Agrimart/wsgi.py"
+      }
+    ]
+  }
