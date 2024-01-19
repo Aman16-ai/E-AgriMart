@@ -27,6 +27,9 @@ class BidDashBoardService:
                     .set_is_current_customer_added_bid(Bid.is_current_customer_added(self.user,self.crop))\
                     .set_current_customer_bid_amount(customer_bid.bid_price)\
                     .set_current_customer_profit_amount(customer_bid.profit)
+            else:
+                self.builder\
+                    .set_is_current_customer_added_bid(False)
             
         return self.builder.build()
     

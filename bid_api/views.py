@@ -7,10 +7,15 @@ from .service.RedisPubBid import RedisPubBid
 from farmer.models import Bid
 from rest_framework.exceptions import APIException
 from .service.bid_dashboard_service import BidDashBoardService
-
+from django_filters import rest_framework as filter
 class BidViewSet(viewsets.ModelViewSet):
     queryset = Bid.objects.all()
-    # serializer_class = GetBidModelSerializer
+    filter_backends = (filter.DjangoFilterBackend,)
+    filterset_fields = {
+        'crop':['exact'],
+        'farmer':['exact'],
+        'customer':['exact'],
+    }
     permission_classes = [CustomerOrReadOnlyPermission]
     # def get_queryset(self):
     #     rb = RedisPubBid()
@@ -29,7 +34,7 @@ class BidViewSet(viewsets.ModelViewSet):
             dashBoardService = BidDashBoardService(product_id=product_id,user=request.user)
             data = dashBoardService.getDashBoardData()
             print('data ------> data',data)
-            return Response({"Response":data},status=status.HTTP_200_OK)
+            return Response(data,status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             raise APIException(detail={"Error":"Something went wrong"})
@@ -38,7 +43,7 @@ class BidViewSet(viewsets.ModelViewSet):
             return self.serializers['list']
         return self.serializers['create']
     def finalize_response(self, request, response, *args, **kwargs):
-        final_response = Response({"status":response.status_code,"Response":response.data})
+        final_response = Response({"status":response.status_code,"Response":response.data},status=response.status_code)
         final_response.accepted_renderer = request.accepted_renderer
         final_response.accepted_media_type = request.accepted_media_type
         final_response.renderer_context = self.get_renderer_context()
