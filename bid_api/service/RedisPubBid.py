@@ -5,5 +5,5 @@ class RedisPubBid:
         self.client = redis.StrictRedis(host="localhost",port=6379, db=0)
     
     def pubBid(self,channel,bid):
-        response = self.client.publish(channel,"newmessage bid created")
+        response = self.client.publish(channel,bid)
         print('redis response',response)
