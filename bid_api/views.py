@@ -1,6 +1,6 @@
 from rest_framework import viewsets,status
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action,api_view
 from middleware.custom_permission import CustomerOrReadOnlyPermission
 from .serializers import *
 from .service.RedisPubBid import RedisPubBid
@@ -8,6 +8,7 @@ from farmer.models import Bid
 from rest_framework.exceptions import APIException
 from .service.bid_dashboard_service import BidDashBoardService
 from django_filters import rest_framework as filter
+import json
 class BidViewSet(viewsets.ModelViewSet):
     queryset = Bid.objects.all()
     filter_backends = (filter.DjangoFilterBackend,)
@@ -17,16 +18,13 @@ class BidViewSet(viewsets.ModelViewSet):
         'customer':['exact'],
     }
     permission_classes = [CustomerOrReadOnlyPermission]
-    # def get_queryset(self):
-    #     rb = RedisPubBid()
-    #     print('running')
-    #     rb.pubBid("eargi","bid")
-    #     return super().get_queryset()
     serializers = {
         'list' : GetBidModelSerializer,
         'create' : BidModelSerializer
     }
-
+    def get_queryset(self):
+        return Bid.objects.all().order_by('-bid_price')
+    
     @action(detail=False,methods=['GET'])
     def get_dashboad_data(self,request,pk=None):
         try:
@@ -38,6 +36,17 @@ class BidViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
             raise APIException(detail={"Error":"Something went wrong"})
+    
+    def perform_create(self, serializer):
+        response = super().perform_create(serializer)
+
+        # After creating the bid we have to publish it on redis channel. Channel is the crop id of that bid.
+        instance = serializer.instance
+        ser = GetBidModelSerializer(instance,many=False)
+        pub = RedisPubBid()
+        pub.pubBid(str(instance.crop.id),json.dumps(ser.data))
+        
+        return response
     def get_serializer_class(self):
         if self.action == 'list':
             return self.serializers['list']
