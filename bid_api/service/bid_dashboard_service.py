@@ -20,7 +20,7 @@ class BidDashBoardService:
             .set_highest_bid_price(highest_bid_price)
         
         if(self.user.user_type == 'Customer'):
-            customer_bid = Bid.get_customer_bid(self.user,self.crop)
+            customer_bid = Bid.get_customer_lastest_bid(self.user,self.crop)
             print('customer bid ------> ',customer_bid)
             if(customer_bid != None):
                 self.builder\
