@@ -8,7 +8,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 status_choice = (
     ("Pending","Pending"),
-    ("Selected","Selected")
+    ("Selected","Selected"),
+    ('Locked','Locked')
 )
 
 crop_quality_choice = (
@@ -52,6 +53,7 @@ class Bid(models.Model):
     crop = models.ForeignKey(Product,on_delete=models.CASCADE,null=True,blank=True)
     status = models.CharField(choices = status_choice,max_length=20)
     bid_price = models.PositiveIntegerField()
+    timestamp = models.DateTimeField(auto_now_add=True,null=True,blank=True)
     
     def __str__(self):
         return f"Bid by {self.customer.user.username}"
@@ -65,8 +67,15 @@ class Bid(models.Model):
         return Bid.objects.filter(Q(customer=user) & Q(crop=crop)).exists()
 
     @staticmethod
-    def get_customer_bid(user,crop):
+    def get_customer_lastest_bid(user,crop):
         try:
-            return Bid.objects.get(Q(customer=user) & Q(crop=crop))
+        # Retrieve bids for the specified customer and crop, ordered by timestamp in descending order
+            bids = Bid.objects.filter(customer=user, crop=crop).order_by('-timestamp')
+            if bids.exists():
+                # Return the latest bid
+                return bids.first()
+            else:
+                return None
         except ObjectDoesNotExist:
             return None
+    

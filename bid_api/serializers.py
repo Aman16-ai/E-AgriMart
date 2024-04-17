@@ -22,9 +22,9 @@ class BidModelSerializer(serializers.ModelSerializer):
        
         userObj = self.context['request'].user
         customer = UserProfile.objects.get(user=userObj)
-        if(Bid.objects.filter(Q(customer=customer) & Q(crop = validated_data.get('crop'))).exists()):
-            raise ValidationError(detail={"error":"Bid already exists"})
-        elif validated_data.get('farmer').user.id == validated_data.get('crop').farmer.user.id:
+        # if(Bid.objects.filter(Q(customer=customer) & Q(crop = validated_data.get('crop'))).exists()):
+        #     raise ValidationError(detail={"error":"Bid already exists"})
+        if validated_data.get('farmer').user.id == validated_data.get('crop').farmer.user.id:
 
             # userObj = self.context['request'].user
             # customer = UserProfile.objects.get(user=userObj)
@@ -42,3 +42,8 @@ class GetBidModelSerializer(serializers.ModelSerializer):
         fields = "__all__"
         model = Bid
         depth = True
+
+# class UpdateBidModelSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         fields

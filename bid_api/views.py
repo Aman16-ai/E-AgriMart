@@ -1,7 +1,7 @@
 from rest_framework import viewsets,status
 from rest_framework.response import Response
 from rest_framework.decorators import action,api_view
-from middleware.custom_permission import CustomerOrReadOnlyPermission
+from middleware.custom_permission import CustomerOrReadOnlyPermission, CustomerOrOnlyFarmerBidLockPermission
 from .serializers import *
 from .service.RedisPubBid import RedisPubBid
 from farmer.models import Bid
@@ -17,7 +17,7 @@ class BidViewSet(viewsets.ModelViewSet):
         'farmer':['exact'],
         'customer':['exact'],
     }
-    permission_classes = [CustomerOrReadOnlyPermission]
+    permission_classes = [CustomerOrOnlyFarmerBidLockPermission]
     serializers = {
         'list' : GetBidModelSerializer,
         'create' : BidModelSerializer
@@ -48,7 +48,7 @@ class BidViewSet(viewsets.ModelViewSet):
         
         return response
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action == 'list' or self.action == 'partial_update':
             return self.serializers['list']
         return self.serializers['create']
     def finalize_response(self, request, response, *args, **kwargs):
