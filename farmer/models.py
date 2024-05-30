@@ -18,6 +18,11 @@ crop_quality_choice = (
     ('Low','Low')
 )
 
+product_status = (
+    ('ordered','ordered'),
+    ('unordered','unordered')
+)
+
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
     farmer = models.ForeignKey(UserProfile,on_delete = models.CASCADE)
@@ -27,7 +32,8 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField()
     price = models.PositiveBigIntegerField()
     quality = models.CharField(choices=crop_quality_choice,max_length=30,null=True,blank=True)
-    
+    status = models.CharField(choices=product_status,default='unordered',null=True,blank=True,max_length=30)
+
     def __str__(self):
         return self.crop_name
     
