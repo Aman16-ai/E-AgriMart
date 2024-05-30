@@ -5,11 +5,14 @@ from account.models import CropDetail,UserProfile
 from .serializer import CropsModelSerializer, ProductCreateModelSerializer, ProductModelSerializer
 from rest_framework.response import Response
 from farmer.models import Product
+from rest_framework.views import APIView
+from rest_framework.decorators import action
 class CropsViewSet(viewsets.ModelViewSet):
     queryset = CropDetail.objects.all()
     serializer_class = CropsModelSerializer
     # permission_classes = [FarmerPermission]
 
+    
     def finalize_response(self, request, response, *args, **kwargs):
         final_response = Response({"status":response.status_code,"Response":response.data})
         final_response.accepted_renderer = request.accepted_renderer
@@ -40,8 +43,13 @@ class ProductViewSet(viewsets.ModelViewSet):
             return ProductCreateModelSerializer
         return ProductModelSerializer
     
-    
-    
+    def get_queryset(self):
+        if 'farmer' in self.request.GET:
+            if self.request.GET['farmer'] == '1':
+                print('running inside')
+                farmer = UserProfile.objects.get(user=self.request.user)
+                return Product.objects.filter(farmer=farmer)
+        return super().get_queryset()
     def finalize_response(self, request, response, *args, **kwargs):
         final_response = Response({"status":response.status_code,"Response":response.data})
         final_response.accepted_renderer = request.accepted_renderer
@@ -63,3 +71,8 @@ class ProductViewSet(viewsets.ModelViewSet):
             'request': getattr(self, 'request', None)
         }
     
+
+
+class FarmerDashboadOverViewApiView(APIView):
+    permission_classes = [FarmerPermission]
+    # todo: create an api to get total crop listed, total number of orders, locked bids, revenue

@@ -10,6 +10,7 @@ from .service.bid_dashboard_service import BidDashBoardService
 from django_filters import rest_framework as filter
 import json
 class BidViewSet(viewsets.ModelViewSet):
+    #Todo : add validatoin in partial update method that farmer can locked that bid that belongs to its crop
     queryset = Bid.objects.all()
     filter_backends = (filter.DjangoFilterBackend,)
     filterset_fields = {

@@ -45,6 +45,14 @@ class Product(models.Model):
         heighest_bid_price = Bid.objects.filter(crop=self).aggregate(Max("bid_price"))['bid_price__max']
         return heighest_bid_price or 0
     
+    @staticmethod
+    def getFarmersTotalCrops(farmer,countOnly=False):
+        allCrops = []
+        if countOnly:
+            allCrops = Product.objects.filter(farmer=farmer)
+            return allCrops.count()
+        return allCrops
+    
 
 class Bid(models.Model):
     id = models.AutoField(primary_key=True)
@@ -78,4 +86,14 @@ class Bid(models.Model):
                 return None
         except ObjectDoesNotExist:
             return None
+        
+    @staticmethod
+    def getFarmersTotalNumberOfLockedBids(farmer,countOnly=False):
+        allBids = []
+        if countOnly:
+            allBids = Bid.objects.filter(farmer=farmer,status_choice='Locked')
+            return allBids.count()
+        return allBids
+
+        
     
