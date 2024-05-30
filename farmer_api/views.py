@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from farmer.models import Product
 from rest_framework.views import APIView
 from rest_framework.decorators import action
+from django_filters import rest_framework as filter
 class CropsViewSet(viewsets.ModelViewSet):
     queryset = CropDetail.objects.all()
     serializer_class = CropsModelSerializer
@@ -38,6 +39,10 @@ class CropsViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     permission_classes = [FarmerOrReadOnlyPermission]
+    filter_backends = (filter.DjangoFilterBackend,)
+    filterset_fields = {
+        'status':['exact']
+    }
     def get_serializer_class(self):
         if self.action == 'create':
             return ProductCreateModelSerializer
