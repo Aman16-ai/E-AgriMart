@@ -47,9 +47,22 @@ class CustomerOrReadOnlyPermission(CustomerPermission):
 
 class CustomerOrOnlyFarmerBidLockPermission(CustomerOrReadOnlyPermission):
     def has_permission(self, request, view):
+        
         if((request.method == 'PATCH' or request.method == 'PUT') and FarmerPermission().has_permission(request=request,view=view)):
             if(request.data['status'] == 'Locked'):
                 return True
             return False
+        
+        elif((request.method == 'PATCH' or request.method == 'PUT') and request.data['status'] == 'Locked'): 
+            return False
 
         return super().has_permission(request, view)
+
+class IsCustomerOrBidOwner(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        
+        if request.method == 'GET':
+            return True
+        
+        return obj.customer.user == request.user

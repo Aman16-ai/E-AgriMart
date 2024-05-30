@@ -22,6 +22,7 @@ class ProductModelSerializer(serializers.ModelSerializer):
         if(self.context['request'].method == 'GET'):
             rep['averageBidPrice'] = self.get_averageBidPrice(instance)
             rep['total_bids'] = instance.get_totalBids()
+            rep['highest_bid_price'] = instance.get_heighest_bid_price()
         return rep
     
     class Meta:
