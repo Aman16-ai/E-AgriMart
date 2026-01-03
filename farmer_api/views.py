@@ -41,7 +41,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     permission_classes = [FarmerOrReadOnlyPermission]
     filter_backends = (filter.DjangoFilterBackend,)
     filterset_fields = {
-        'status':['exact']
+        'status':['exact'],
+        'crop_name':['exact','icontains'],
     }
     def get_serializer_class(self):
         if self.action == 'create':
